@@ -11,7 +11,7 @@ const jsonArray = {
     "type" : "string",
 }
 
-// converting array to string using JSON API - cant say data from object to local storage
+// converting array to string using JSON API - cant save data from object to local storage
 const jsonString = JSON.stringify(jsonArray);
 console.log(jsonString);
 console.log(jsonArray);
