@@ -1,0 +1,34 @@
+body{
+    font-family: "Roboto", sans-serif;
+}
+
+div{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+
+h1{
+    color: blue;
+    margin-top: 50px;
+    margin-bottom: 25px;
+    align-self: center;
+}
+
+h2{
+    color: rgb(47, 47, 47);
+    align-self: center;
+    margin-bottom: 50px;
+}
+
+audio{
+    width: 40%;
+    align-self: center;
+}
+
+button{
+    width: 20%;
+    align-self: center;
+    margin-top: 10px;
+}

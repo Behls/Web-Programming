@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 1 Tutorial</title>
+    <link rel="stylesheet" href="./main.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div>
+        <h1>Week 1 Tutorial</h1>
+        <h2>Web Workers</h2>
+        <input type="text" id="textbox"><Button id="get-it">Get Count</Button>
+    </div>
+    <!-- can inject javascript either using a js file -->
+    <!-- <script src="./index.js"></script> -->
+
+    <script>
+
+        // javascript is single threaded
+        // this means:
+        // cannot add additional threads for heavy duty work/calculations
+        // however there are ways to mimic it as multi thread
+
+        function isPrime (n) {
+            
+            if(n<2){
+                return false;
+            }
+
+            for (var x =2; x<n; x++){
+                if( n % x == 0){
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        var value = 100;
+        var count = 0;
+
+        $('#get-it').click(function(){
+            $('#textbox').val(count);
+        });
+
+        for (var i=0; i<value; i++){
+            var a = isPrime(i);
+            if(a){
+                console.log(a);
+                count++;
+            }
+        }
+
+        console.log("count : " +count);
+
+    </script>
+</body>
+</html>

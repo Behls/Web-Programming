@@ -1,0 +1,38 @@
+html{
+    width: 100vw;
+}
+
+body{
+    font-family: "Roboto", sans-serif;
+}
+
+h1{
+    color: blue;
+    align-self: center;
+}
+
+h2{
+    color: rgb(47, 47, 47);
+    align-self: center;
+}
+
+div{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+canvas{
+    align-self: center;
+    background-color: white;
+    border: 3px solid black;
+    border-radius: 10px;
+}
+
+#dog{
+    display: none;
+}
+
+ul, ol, input, button{
+    align-self: center;
+}

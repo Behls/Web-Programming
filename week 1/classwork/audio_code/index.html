@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 1 Tutorial</title>
+    <link rel="stylesheet" href="./main.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div>
+        <h1>Week 1 Tutorial</h1>
+        <h2>Embedding audio into a browser</h2>
+        <audio id="audio-file">
+            <source src="music.mp3" type="audio/mpeg">
+        </audio>
+
+        <button type="button" id="btn-play">Play</button>
+        <button type="button " id="btn-pause">Pause</button>
+        <button type="button" id="btn-volup">Volume Up</button>
+        <button type="button " id="btn-voldown">Volume Down</button>
+
+    </div>
+    <!-- can inject javascript either using a js file
+    <script src="./index.js"></script> -->
+</body>
+
+<!-- or can just write javascript in the code -->
+<script>
+
+    "use strict"
+    $("#btn-play").click(function(e){
+        console.log(e);
+        $('#audio-file')[0].play();
+    })
+
+    $("#btn-pause").click(function(e){
+        $('#audio-file')[0].pause();
+    })
+
+    $("#btn-volup").click(function(e){
+        $('#audio-file')[0].volume += 0.1;
+    })
+
+    $("#btn-voldown").click(function(e){
+        $('#audio-file')[0].volume -= 0.1;
+    })
+
+</script>
+</html>
