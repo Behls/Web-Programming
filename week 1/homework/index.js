@@ -27,7 +27,6 @@ var destroylist = []; // Empty List at start
  var HEIGHT=700;
  var SCALE=30;
  var world = new b2World(
- 
  new b2Vec2(0,9.81),
      true
  );
@@ -41,11 +40,30 @@ var destroylist = []; // Empty List at start
  var rightWall = defineNewStatic(1.0,0.5,0.2,WIDTH-5,HEIGHT,20,HEIGHT,"rightwall",0);
 
 //  platforms
-var plat1 = defineNewStatic(1.0,0.5,0.1,520, 250, 250, 5,"plat1",-0.2);
-var plat2 = defineNewStatic(1.0,0.5,0.1,300,100,250,5,"plat2",0.2);
-var plat3 = defineNewStatic(1.0,0.5,0.1,200, 450, 250, 5,"plat3",0.2);
+
+ const angled = {
+    plat1 : defineNewStatic(1.0,0.5,0.1,520, 250, 250, 5,"plat", -0.2),
+    plat2 : defineNewStatic(1.0,0.5,0.1,190,100,100,5,"plat",0.2),
+    plat3 : defineNewStatic(1.0,0.5,0.1,200, 450, 250, 5,"plat",0.2),
+ }
+
+const straight = {
+    plat4: defineNewStatic(1.0,0.5,0.1,600, 100, 90, 5,"win-plat",0),
+    plat5: defineNewStatic(1.0,0.5,0.1,500, 600, 250, 5,"plat",0),
+}
+
+
+let random=Math.floor(Math.random() * 7) + 1;;
+
+for (let i = 1; i<random; i++){
+    let height = Math.floor(Math.random() * HEIGHT) + 1;
+    let width = Math.floor(Math.random() * WIDTH/2) + 1;
+    defineNewStatic(1.0,0.5,0.1,height, width, 250, 5,"plat",0);
+    i+=1;
+}
 
 // can do it outside the object or pass in an angle value to the static function
+
 // plat1.GetBody().SetAngle(-0.2);
 // plat2.GetBody().SetAngle(0.2);
 // plat3.GetBody().SetAngle(0.3);
@@ -56,9 +74,9 @@ var plat3 = defineNewStatic(1.0,0.5,0.1,200, 450, 250, 5,"plat3",0.2);
 //  var circle = defineNewDynamicCircle(1.0,1.0,0.5,400,100,20,"circle");
 //  var circle2 = defineNewDynamicCircle(1.0,1.0,0.5,380,110,10,"circle2");
 
-var barrel = defineNewDynamicCircle(1.0,1.0,0.5,380,110,20,"barrel");
+// var barrel = defineNewDynamicCircle(1.0,1.0,0.5,380,110,20,"barrel");
 
-setInterval(()=>{
+let barrelSpawn = setInterval(()=>{
     defineNewDynamicCircle(1.0,1.0,0.5,380,110,10,"barrel");
 }, 10000);
 
@@ -95,6 +113,7 @@ Debug Draw
      destroylist.length = 0;
 
      window.requestAnimationFrame(update);
+
  }
 
  window.requestAnimationFrame(update);
@@ -104,10 +123,11 @@ Debug Draw
 */
  
 var listener = new Box2D.Dynamics.b2ContactListener;
+const container = document.getElementById('text-container');
+let canJump;
 
 listener.BeginContact = function(contact) {
     //  console.log("Begin Contact:"+contact.GetFixtureA().GetBody().GetUserData());
-     
      var fixa=contact.GetFixtureA().GetBody().GetUserData();
      var fixb=contact.GetFixtureB().GetBody().GetUserData();
 
@@ -115,12 +135,51 @@ listener.BeginContact = function(contact) {
         destroylist.push(contact.GetFixtureA().GetBody());
      }
      if(fixa.id == "ground" && fixb.id =="barrel"){
+
         destroylist.push(contact.GetFixtureB().GetBody());
+
+     }if(fixa.id== "barrel" && fixb.id =="hero"){
+        
+        container.insertAdjacentText('afterbegin','Game Over - You lost!');
+
+        destroylist.push(contact.GetFixtureA().GetBody());
+        destroylist.push(contact.GetFixtureB().GetBody());
+
+        clearInterval(barrelSpawn);
+
+     }if(fixb.id== "barrel" && fixa.id =="hero"){
+
+        container.insertAdjacentText('afterbegin','Game Over - You lost!');
+
+        destroylist.push(contact.GetFixtureA().GetBody());
+        destroylist.push(contact.GetFixtureB().GetBody());
+        clearInterval(barrelSpawn);
+
+     }if(fixb.id== "hero" && fixa.id =="win-plat"){
+        container.insertAdjacentText('afterbegin','Game Over - You won!');
+
+        destroylist.push(contact.GetFixtureB().GetBody());
+        destroylist.push(barrelSpawn);
+        clearInterval(barrelSpawn);
+
+     }if(fixa.id== "hero" && fixb.id =="win-plat"){
+        container.insertAdjacentText('afterbegin','Game Over - You won!');
+        destroylist.push(contact.GetFixtureA().GetBody());
+        clearInterval(barrelSpawn);
+
+     }if(fixa.id== "hero" && fixb.id =="ground"){
+        canJump = true;
      }
+     if(fixa.id== "ground" && fixb.id =="hero"){
+        canJump = true;
+     }
+
  }
 
 listener.EndContact = function(contact) {
     //  console.log("End Contact:"+contact.GetFixtureA().GetBody().GetUserData());
+    var fixa=contact.GetFixtureA().GetBody().GetUserData();
+    var fixb=contact.GetFixtureB().GetBody().GetUserData();
  }
 
 listener.PostSolve = function(contact, impulse) {
@@ -130,8 +189,8 @@ listener.PostSolve = function(contact, impulse) {
  }
 
 listener.PreSolve = function(contact, oldManifold) {
- 
 }
+
  this.world.SetContactListener(listener);
  
  /***
@@ -142,18 +201,15 @@ listener.PreSolve = function(contact, oldManifold) {
     if(e.keyCode == 87 || e.keyCode == 38){
         doJump();
     }if(e.keyCode == 83 || e.keyCode == 40){
-        console.log("down down");
+
     }if(e.keyCode == 65 || e.keyCode == 37){
-        console.log("left down");
         goLeft();
     }if(e.keyCode == 68 || e.keyCode == 39){
-        console.log("right down");
         goRight();
     }
  })
 
  $(document).keyup(function(e){
-
     if(e.keyCode == 87 || e.keyCode == 38){
         console.log("up up");
     }if(e.keyCode == 83 || e.keyCode == 40){
@@ -187,13 +243,15 @@ function goLeft() {
 }
 
 function doJump(){
-    hero.GetBody().ApplyImpulse(new b2Vec2(0,5), hero.GetBody().GetWorldCenter()
-    
-    
-    )
+    if(canJump){
+        hero.GetBody().ApplyImpulse(new b2Vec2(0,-5), hero.GetBody().GetWorldCenter());
+        canJump = false;
+    }
 }
 
- function defineNewStatic(density, friction, restitution, x, y, width, height, objid, angle) {
+
+
+function defineNewStatic(density, friction, restitution, x, y, width, height, objid, angle) {
      var fixDef = new b2FixtureDef;
      fixDef.density = density;
      fixDef.friction = friction;
@@ -210,7 +268,7 @@ function doJump(){
      return thisobj;
  }
 
- function defineNewDynamic(density, friction, restitution, x, y, width, height, objid) {
+function defineNewDynamic(density, friction, restitution, x, y, width, height, objid) {
      var fixDef = new b2FixtureDef;
      fixDef.density = density;
      fixDef.friction = friction;
@@ -226,7 +284,7 @@ function doJump(){
      return thisobj;
  }
 
- function defineNewDynamicCircle(density, friction, restitution, x, y, r, objid) {
+function defineNewDynamicCircle(density, friction, restitution, x, y, r, objid) {
      var fixDef = new b2FixtureDef;
      fixDef.density = density;
      fixDef.friction = friction;
