@@ -39,11 +39,14 @@ var ground = defineNewStatic(1.0,0.5,0.2,(WIDTH/2),500,(WIDTH/2),10,"plat1",0.1)
 
 // dynamic
 var wheel1 = defineNewDynamicCircle(1,1,0.5,400,300,20,"wheel1");
+var wheel2 = defineNewDynamicCircle(1,1,0.5,480,300,20,"wheel2");
+
 var car = defineNewDynamic(1,1,0.5,440,295,60,10,"car");
 
 // revolute joint - anchor joint to another object, like a tie to another object - can rotate around a point, where it is connected to another object 
-
 var rearWheel = defineRevoluteJoint(wheel1,car);
+var frontWheel = defineRevoluteJoint(wheel2,car);
+
 
 /*
 Debug Draw
@@ -202,6 +205,7 @@ function changeUserdata(target, property, newvalue){
 
 function defineRevoluteJoint(body1, body2){
     var joint = new Box2D.Dynamics.Joints.b2RevoluteJointDef();
+    // third parameter - the joint where it will revolve around -> wheel is rotating not the car block
     joint.Initialize(body1.GetBody(), body2.GetBody(), body1.GetBody().GetWorldCenter());
     return world.CreateJoint(joint);
 }
