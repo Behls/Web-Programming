@@ -32,20 +32,31 @@ new b2Vec2(0,9.81),
 );
 
 // static
-var ground = defineNewStatic(1.0,0.5,0.2,(WIDTH/2),HEIGHT,(WIDTH/2),30,"ground",0);
-
-var ground = defineNewStatic(1.0,0.5,0.2,(WIDTH/2),500,(WIDTH/2),10,"plat1",0.1);
+var ground = defineNewStatic(1.0,0.5,0.1,(WIDTH/2),HEIGHT,(WIDTH/2),30,"ground",0);
+var platform = defineNewStatic(1.0,0.5,0.2,100,500,200,10,"plat1",-0.1);
 
 
 // dynamic
-var wheel1 = defineNewDynamicCircle(1,1,0.5,400,300,20,"wheel1");
-var wheel2 = defineNewDynamicCircle(1,1,0.5,480,300,20,"wheel2");
+var wheel1 = defineNewDynamicCircle(0.5,0.3,0.5,100,320,20,"wheel1");
+var wheel2 = defineNewDynamicCircle(1,0.5,0.6,190,315,10,"wheel2");
 
-var car = defineNewDynamic(1,1,0.5,440,295,60,10,"car");
+var car = defineNewDynamic(1,1,0.5,140,295,60,10,"car");
 
 // revolute joint - anchor joint to another object, like a tie to another object - can rotate around a point, where it is connected to another object 
 var rearWheel = defineRevoluteJoint(wheel1,car);
 var frontWheel = defineRevoluteJoint(wheel2,car);
+
+rearWheel.SetMotorSpeed(-5);
+// setting torque sets the force 
+rearWheel.SetMaxMotorTorque(10);
+// rearWheel.EnableMotor(true);
+
+// speeds are relative to the size of the object -> back wheel is double size -> double figures required
+frontWheel.SetMotorSpeed(-10);
+// setting torque sets the force 
+frontWheel.SetMaxMotorTorque(20);
+// frontWheel.EnableMotor(true);
+
 
 
 /*
@@ -121,21 +132,30 @@ this.world.SetContactListener(listener);
 
 $(document).keydown(function(e){
     if(e.keyCode == 87 || e.keyCode == 38){
-        doJump();
+        frontWheel.EnableMotor(true);
+        rearWheel.EnableMotor(true);
+        rearWheel.SetMotorSpeed(-10);
+        frontWheel.SetMotorSpeed(-20);
     }if(e.keyCode == 83 || e.keyCode == 40){
- 
+        frontWheel.EnableMotor(true);
+        rearWheel.EnableMotor(true);
+        rearWheel.SetMotorSpeed(5);
+        frontWheel.SetMotorSpeed(10);
     }if(e.keyCode == 65 || e.keyCode == 37){
-        goLeft();
+        car.GetBody().SetAngularVelocity(car.GetBody().GetAngularVelocity()-5);
+        
     }if(e.keyCode == 68 || e.keyCode == 39){
-        goRight();
+        car.GetBody().SetAngularVelocity(car.GetBody().GetAngularVelocity()+5);
     }
  })
  
  $(document).keyup(function(e){
     if(e.keyCode == 87 || e.keyCode == 38){
-        console.log("up up");
+        frontWheel.EnableMotor(false);
+        rearWheel.EnableMotor(false);
     }if(e.keyCode == 83 || e.keyCode == 40){
-        console.log("down up");
+        frontWheel.EnableMotor(false);
+        rearWheel.EnableMotor(false);
     }if(e.keyCode == 65 || e.keyCode == 37){
         console.log("left up");
     }if(e.keyCode == 68 || e.keyCode == 39){

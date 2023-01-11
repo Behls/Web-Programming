@@ -31,6 +31,17 @@ new b2Vec2(0,9.81),
     true
 );
 
+//static 
+var plat1 = defineNewStatic(1.0,1.0,0.1,150,50,10,10,"ropeanchor",0);
+var plat2 = defineNewStatic(1.0,1.0,0.1,400,50,10,10,"ropeanchor",0);
+var plat3 = defineNewStatic(1.0,1.0,0.1,650,50,10,10,"ropeanchor",0);
+
+
+// dynamic
+var ball = defineNewDynamicCircle(1.0,0.2,0.1,400,300,20,"ball");
+
+var rope1 = defineDistJoint(plat1, ball);
+
 /*
 Debug Draw
 */
@@ -179,9 +190,10 @@ function defineNewDynamicCircle(density, friction, restitution, x, y, r, objid) 
     return thisobj;
 }
 
-function changeUserdata(target, property, newvalue){
-    var currentData = target.GetBody().GetUserData();
-    currentData[property] = newvalue;
-    target.GetBody().SetUserData(currentData);
-    console.log(target.GetBody().GetUserData());
+function defineDistJoint(item1, item2){
+    // 4 bits of data, 2 objects being connected, 2 points to be connected to
+    var joint = new Box2D.Dynamics.Joints.b2DistanceJointDef();
+    joint.Initialize(item1.GetBody(), item2.GetBody(), item1.GetBody().GetWorldCenter(), item2.GetBody().GetWorldCenter());
+    return world.CreateJoint(joint);
 }
+
