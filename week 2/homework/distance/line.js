@@ -19,6 +19,10 @@ var b2DebugDraw = Box2D.Dynamics.b2DebugDraw;
 */
 
 var destroylist = []; // Empty List at start
+var destroyJoints = [];
+var custIsActive = false;
+var startx = null;
+var starty = null;
 
 /*****
 * Define Canvas and World
@@ -37,10 +41,14 @@ var plat2 = defineNewStatic(1.0,1.0,0.1,400,50,10,10,"ropeanchor",0);
 var plat3 = defineNewStatic(1.0,1.0,0.1,650,50,10,10,"ropeanchor",0);
 
 
+var distJoints =[];
+
 // dynamic
 var ball = defineNewDynamicCircle(1.0,0.2,0.1,400,300,20,"ball");
 
-var rope1 = defineDistJoint(plat1, ball);
+distJoints.push(defineDistJoint(plat1, ball));
+distJoints.push(defineDistJoint(plat2, ball));
+distJoints.push(defineDistJoint(plat3, ball));
 
 /*
 Debug Draw
@@ -109,6 +117,28 @@ listener.PreSolve = function(contact, oldManifold) {
 this.world.SetContactListener(listener);
 
 
+
+// mouse controls
+$('#b2dcan').mousedown(function () { 
+    custIsActive = true;
+});
+
+$('#b2dcan').mousemove(function (e) { 
+    if(custIsActive){
+        if(startx == null){
+            startx = e.offsetX;
+            starty = e.offsetY;
+        }else{
+            lineCollision(startx, starty, e.offsetX, e.offsetY);
+        }
+    }
+});
+
+$('#b2dcan').mouseup(function () { 
+    custIsActive = false;
+    startx = null;
+    starty = null;
+});
 /***
  * Keyboard Controls
  */
@@ -197,3 +227,25 @@ function defineDistJoint(item1, item2){
     return world.CreateJoint(joint);
 }
 
+function lineCollision(m1x,m1y,m2x,m2y){
+    for(var i in distJoints){
+        var p1x = distJoints[i].GetAnchorA().x*SCALE;
+        var p1y = distJoints[i].GetAnchorA().y*SCALE;
+        var p2x = distJoints[i].GetAnchorB().x*SCALE;
+        var p2y = distJoints[i].GetAnchorB().y*SCALE;
+
+        var gamma, lambda;
+        var determinant = (m2x - m1x ) * (p2y - p1y) - (p2x - p1x) * (m2y - m1y);
+        if(determinant != 0){
+            lambda = ((p2y-p1y) * (p2x - m1x) + (p1x - p2x)* (p2y-m1y)) / determinant;
+            gamma = ((m1y - m2y) * (p2x-m1x)+(m2x -m1x)*(p2y-m1y))/determinant;
+        }if((0<lambda && lambda < 1) && (0 < gamma && gamma <1)){
+            destroyJoint(distJoints[i]);
+        }
+    }
+
+}
+
+function destroyJoint(joint){
+    world.DestroyJoint(joint);
+}
